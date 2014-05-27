@@ -1,0 +1,13 @@
+<jboss-deployment-structure>
+
+    <ear-subdeployments-isolated>true</ear-subdeployments-isolated>
+    <sub-deployment name="ejb.jar">
+        <exclusions>
+            <module name="org.jgroups" />
+        </exclusions>
+        <resources>
+            <resource-root path="infinispan-core-5.2.7.Final-redhat-1.jar" />
+        </resources>
+    </sub-deployment>
+
+</jboss-deployment-structure>

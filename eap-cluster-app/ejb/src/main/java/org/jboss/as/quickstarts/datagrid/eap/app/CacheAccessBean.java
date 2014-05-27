@@ -20,8 +20,10 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.naming.InitialContext;
 
+import org.infinispan.manager.DefaultCacheManager;
 import org.jboss.logging.Logger;
 
 /**
@@ -36,6 +38,9 @@ public class CacheAccessBean implements CacheAccess {
     private static final Logger LOGGER = Logger.getLogger(CacheAccessBean.class);
     @Resource
     SessionContext context;
+
+    @Inject
+    DefaultCacheManager cacheManager;
 
   /**
    * The context to invoke foreign EJB's as the SessionContext can not be used for that.
@@ -56,6 +61,7 @@ public class CacheAccessBean implements CacheAccess {
 
     @Override
     public void addToCache(String key, String value) {
-    	LOGGER.info("addToCache("+key+","+value+")");
+        LOGGER.info("addToCache("+key+","+value+")");
+        LOGGER.info("My cache manager = " + cacheManager);
     }
 }

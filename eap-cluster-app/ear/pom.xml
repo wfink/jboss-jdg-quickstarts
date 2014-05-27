@@ -79,5 +79,15 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources/META-INF</directory>
+                <!-- add the classloading configuration -->
+                <includes>
+                    <include>*.xml</include>
+                </includes>
+                <targetPath>META-INF</targetPath>
+            </resource>
+        </resources>
     </build>
 </project>

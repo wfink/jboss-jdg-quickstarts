@@ -44,6 +44,17 @@
             <type>pom</type>
             <scope>provided</scope>
         </dependency>
+        <!-- For JDG caches -->
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -58,10 +69,6 @@
                     <generateClient>true</generateClient>
                     <archive>
                         <addMavenDescriptor>false</addMavenDescriptor>
-                        <!-- this dependency must be set because of the access to the scoped context inside the MainAppSContextBean -->
-                        <manifestEntries>
-                            <Dependencies>org.jboss.xnio</Dependencies>
-                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
