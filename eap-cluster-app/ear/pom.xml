@@ -51,6 +51,17 @@
             <scope>provided</scope>
             <type>pom</type>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.marshalling</groupId>
+            <artifactId>jboss-marshalling</artifactId>
+            <scope>runtime</scope>
+            <version>1.4.2.Final-redhat-2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.marshalling</groupId>
+            <artifactId>jboss-marshalling-river</artifactId>
+            <version>1.4.2.Final-redhat-2</version>
+        </dependency>
     </dependencies>
 
     <build>

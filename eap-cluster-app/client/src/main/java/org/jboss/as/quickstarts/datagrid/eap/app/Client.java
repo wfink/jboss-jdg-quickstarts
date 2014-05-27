@@ -67,10 +67,11 @@ public class Client {
         props.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
         InitialContext context = new InitialContext(props);
 
-        final boolean useScopedExample = Boolean.getBoolean("UseScopedContext");
         final String rcal = "ejb:jboss-eap-application/ejb//CacheAccessBean!" + CacheAccess.class.getName();
         final CacheAccess remote = (CacheAccess) context.lookup(rcal);
         remote.addToCache("One", "The first cache entry");
+
+        System.out.println("Get 'One'=" + remote.getFromCache("One") + "from the cache back");
     }
 
 }

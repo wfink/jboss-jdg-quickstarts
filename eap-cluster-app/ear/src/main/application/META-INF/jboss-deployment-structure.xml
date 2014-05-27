@@ -7,6 +7,9 @@
         </exclusions>
         <resources>
             <resource-root path="infinispan-core-5.2.7.Final-redhat-1.jar" />
+            <resource-root path="jboss-marshalling-1.4.2.Final-redhat-2.jar" />
+            <resource-root path="jboss-marshalling-river-1.4.2.Final-redhat-2.jar" />
+            <!-- resource-root path="jgroups-3.4.3.Final-redhat-1.jar"/ -->
         </resources>
     </sub-deployment>
 

@@ -35,26 +35,29 @@ import org.infinispan.manager.DefaultCacheManager;
  * @author Wolf-Dieter Fink
  */
 @ApplicationScoped
-public class MyCacheManagerProvider {
-	private static final Logger log = Logger.getLogger(MyCacheManagerProvider.class.getName());
+public class AppCacheManagerProvider {
+    private static final Logger log = Logger.getLogger(AppCacheManagerProvider.class.getName());
     private DefaultCacheManager manager;
 
     public DefaultCacheManager getCacheManager() {
         if (manager == null) {
             log.info("\n\n DefaultCacheManager does not exist - constructing a new one\n\n");
 
-            GlobalConfiguration glob = new GlobalConfigurationBuilder().clusteredDefault() // Builds a default clustered
-                                                                                           // configuration
-                    .transport().addProperty("configurationFile", "jgroups-udp.xml") // provide a specific JGroups configuration
+//            GlobalConfiguration glob = new GlobalConfigurationBuilder().clusteredDefault() // Builds a default clustered
+            GlobalConfiguration glob = new GlobalConfigurationBuilder().nonClusteredDefault() // Builds a default non clustered configuration
+                    //.transport().addProperty("configurationFile", "jgroups-udp.xml") // provide a specific JGroups configuration
                     .globalJmxStatistics().allowDuplicateDomains(true).enable() // This method enables the jmx statistics of
                     // the global configuration and allows for duplicate JMX domains
                     .build(); // Builds the GlobalConfiguration object
             Configuration loc = new ConfigurationBuilder().jmxStatistics().enable() // Enable JMX statistics
-                    .clustering().cacheMode(CacheMode.DIST_SYNC) // Set Cache mode to DISTRIBUTED with SYNCHRONOUS replication
-                    .hash().numOwners(2) // Keeps two copies of each key/value pair
+//                    .clustering().cacheMode(CacheMode.DIST_SYNC) // Set Cache mode to DISTRIBUTED with SYNCHRONOUS replication
+//                    .hash().numOwners(2) // Keeps two copies of each key/value pair
                     // the lifespan parameter) and are removed from the cache (cluster-wide).
                     .build();
             manager = new DefaultCacheManager(glob, loc, true);
+
+            Configuration cache1 = new ConfigurationBuilder().build();
+            manager.defineConfiguration("cache1", cache1);
         }
         return manager;
     }

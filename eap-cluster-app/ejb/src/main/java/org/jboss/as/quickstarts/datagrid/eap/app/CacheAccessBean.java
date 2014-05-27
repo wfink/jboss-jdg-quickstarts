@@ -23,6 +23,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.naming.InitialContext;
 
+import org.infinispan.Cache;
 import org.infinispan.manager.DefaultCacheManager;
 import org.jboss.logging.Logger;
 
@@ -63,5 +64,16 @@ public class CacheAccessBean implements CacheAccess {
     public void addToCache(String key, String value) {
         LOGGER.info("addToCache("+key+","+value+")");
         LOGGER.info("My cache manager = " + cacheManager);
+        Cache<String,String> cache = cacheManager.getCache("cache1");
+
+        cache.put(key, value);
+    }
+
+    @Override
+    public String getFromCache(String key) {
+        LOGGER.info("getFromCache("+key+")");
+        Cache<String,String> cache = cacheManager.getCache("cache1");
+
+        return cache.get(key);
     }
 }
