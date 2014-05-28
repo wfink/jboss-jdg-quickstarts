@@ -118,9 +118,11 @@
                         </goals>
                     </execution>
                 </executions>
+                <!--
                 <configuration>
                     <mainClass>org.jboss.as.quickstarts.datagrid.eap.app.Client</mainClass>
                 </configuration>
+                -->
             </plugin>
         </plugins>
      </build>

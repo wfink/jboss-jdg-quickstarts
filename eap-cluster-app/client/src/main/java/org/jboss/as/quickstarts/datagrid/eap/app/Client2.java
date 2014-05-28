@@ -39,7 +39,7 @@ import org.jboss.ejb.client.remoting.ConfigBasedEJBClientContextSelector;
  * 
  * @author <a href="mailto:wfink@redhat.com">Wolf-Dieter Fink</a>
  */
-public class Client {
+public class Client2 {
 
     /**
      * @param args no args needed
@@ -53,7 +53,7 @@ public class Client {
         Properties p = new Properties();
         p.put("remote.connectionprovider.create.options.org.xnio.Options.SSL_ENABLED", "false");
         p.put("remote.connections", "one");
-        p.put("remote.connection.one.port", "4447");
+        p.put("remote.connection.one.port", "4547");
         p.put("remote.connection.one.host", "localhost");
         p.put("remote.connection.one.username", "quickuser");
         p.put("remote.connection.one.password", "quick-123");
@@ -68,7 +68,6 @@ public class Client {
 
         final String rcal = "ejb:jboss-eap-application/ejb//CacheAccessBean!" + CacheAccess.class.getName();
         final CacheAccess remote = (CacheAccess) context.lookup(rcal);
-        remote.addToCache("One", "The first cache entry");
 
         System.out.println("Response: " + remote.getFromCache("One"));
     }

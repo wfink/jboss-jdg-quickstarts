@@ -62,18 +62,19 @@ public class CacheAccessBean implements CacheAccess {
 
     @Override
     public void addToCache(String key, String value) {
-        LOGGER.info("addToCache("+key+","+value+")");
-        LOGGER.info("My cache manager = " + cacheManager);
-        Cache<String,String> cache = cacheManager.getCache("cache1");
-
+        LOGGER.info("addTo progCache ("+key+","+value+")");
+        Cache<String,String> cache = cacheManager.getCache("progCache");
         cache.put(key, value);
     }
 
     @Override
     public String getFromCache(String key) {
-        LOGGER.info("getFromCache("+key+")");
-        Cache<String,String> cache = cacheManager.getCache("cache1");
-
-        return cache.get(key);
+        LOGGER.info("getFrom progCache("+key+")");
+        Cache<String,String> cache = cacheManager.getCache("progCache");
+        final String value = cache.get(key);
+        LOGGER.info("value=" + value);
+        
+        final String nodeName = System.getProperty("jboss.node.name");
+        return "Read progCache for key=" + key + " at server '" + nodeName + "' and get " + (value == null? "no value" : "value="+value);
     }
 }
