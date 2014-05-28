@@ -80,6 +80,9 @@ public class AdminClient {
         final CacheAccess appOne = (CacheAccess) context.lookup(appOneLookup);
         // check that the App1 cache has the correct replicated key entry
         appOne.verifyApp1Cache("App1One", "The App1 One entry");
-}
+        
+        admin.addToApp2Cache("One", "The App2 One entry");
+        admin.verifyApp2Cache("One", "The App2 One entry");
+    }
 
 }

@@ -43,6 +43,9 @@ public class CacheAdminBean implements CacheAdmin {
     @Inject
     DefaultCacheManager cacheManager;
 
+    @Inject @App2Cache
+    DefaultCacheManager cacheManager2;
+
   /**
    * The context to invoke foreign EJB's as the SessionContext can not be used for that.
    */
@@ -86,4 +89,21 @@ public class CacheAdminBean implements CacheAdmin {
         final String nodeName = System.getProperty("jboss.node.name");
         return "Read app1Cache for key=" + key + " at server '" + nodeName + "' and get " + (value == null? "no value" : "value="+value);
     }
+
+    @Override
+    public void addToApp2Cache(String key, String value) {
+        LOGGER.info("addTo app2Cache ("+key+","+value+")");
+        Cache<String,String> cache = cacheManager.getCache("App2Cache");
+        cache.put(key, value);
+    }
+    
+    @Override
+    public void verifyApp2Cache(String key, String value) {
+        Cache<String,String> cache = cacheManager.getCache("App2Cache");
+        final String cacheValue = cache.get(key);
+        if((value==null && cacheValue!=null) || (value!=null && !value.equals(cacheValue)) ) {
+        	throw new IllegalStateException("The given key/value pair does not match the cache!");
+        }
+    }
+
 }

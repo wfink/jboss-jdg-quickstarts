@@ -25,9 +25,17 @@ public class Resources {
 
     @Inject
     App1CacheManagerProvider cacheManagerProvider;
+    @Inject
+    App2CacheManagerProvider cacheManagerProvider2;
 
     @Produces
-    DefaultCacheManager getDefaultCacheManager() {
+    DefaultCacheManager getApp1CacheManager() {
+        return cacheManagerProvider.getCacheManager();
+    }
+
+    @Produces
+    @App2Cache
+    DefaultCacheManager getApp2CacheManager() {
         return cacheManagerProvider.getCacheManager();
     }
 

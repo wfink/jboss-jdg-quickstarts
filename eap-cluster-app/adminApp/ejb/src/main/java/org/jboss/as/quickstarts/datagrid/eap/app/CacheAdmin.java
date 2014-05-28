@@ -26,4 +26,8 @@ public interface CacheAdmin {
     String getFromApp1Cache(String key);
 
 	void verifyApp1Cache(String key, String value);
+
+	void verifyApp2Cache(String key, String value);
+
+	void addToApp2Cache(String key, String value);
 }
