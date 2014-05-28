@@ -46,7 +46,7 @@ public class AppCacheManagerProvider {
             GlobalConfiguration glob = new GlobalConfigurationBuilder()
                     .clusteredDefault() // Builds a default clustered
                     .transport().addProperty("configurationFile", "jgroups-udp.xml") // provide a specific JGroups configuration
-                    .clusterName("ClusterOne")
+                    .clusterName("ClusterApp1")
                     .globalJmxStatistics().allowDuplicateDomains(true).enable() // This method enables the jmx statistics of
                     // the global configuration and allows for duplicate JMX domains
                     .build(); // Builds the GlobalConfiguration object
@@ -55,8 +55,10 @@ public class AppCacheManagerProvider {
                     .build();
             manager = new DefaultCacheManager(glob, loc, true);
 
-            Configuration cache = new ConfigurationBuilder().clustering().cacheMode(CacheMode.REPL_SYNC).build();
-            manager.defineConfiguration("progCache", cache);
+            Configuration progCache = new ConfigurationBuilder().build();
+            manager.defineConfiguration("progCache", progCache);
+            Configuration appCache = new ConfigurationBuilder().clustering().cacheMode(CacheMode.REPL_SYNC).build();
+            manager.defineConfiguration("progCache",appCache);
         }
         return manager;
     }

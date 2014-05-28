@@ -39,7 +39,7 @@ import org.jboss.ejb.client.remoting.ConfigBasedEJBClientContextSelector;
  * 
  * @author <a href="mailto:wfink@redhat.com">Wolf-Dieter Fink</a>
  */
-public class Client2 {
+public class AdminClient {
 
     /**
      * @param args no args needed
@@ -52,11 +52,15 @@ public class Client2 {
         
         Properties p = new Properties();
         p.put("remote.connectionprovider.create.options.org.xnio.Options.SSL_ENABLED", "false");
-        p.put("remote.connections", "one");
-        p.put("remote.connection.one.port", "4547");
-        p.put("remote.connection.one.host", "localhost");
-        p.put("remote.connection.one.username", "quickuser");
-        p.put("remote.connection.one.password", "quick-123");
+        p.put("remote.connections", "admin,appOne");
+        p.put("remote.connection.admin.port", "4447");
+        p.put("remote.connection.admin.host", "localhost");
+//        p.put("remote.connection.admin.username", "quickuser");
+//        p.put("remote.connection.admin.password", "quick-123");
+        p.put("remote.connection.appOne.port", "4547");
+        p.put("remote.connection.appOne.host", "localhost");
+//        p.put("remote.connection.appOne.username", "quickuser");
+//        p.put("remote.connection.appOne.password", "quick-123");
 
         EJBClientConfiguration cc = new PropertiesBasedEJBClientConfiguration(p);
         ContextSelector<EJBClientContext> selector = new ConfigBasedEJBClientContextSelector(cc);
@@ -66,10 +70,16 @@ public class Client2 {
         props.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
         InitialContext context = new InitialContext(props);
 
-        final String rcal = "ejb:jboss-eap-application/ejb//CacheAccessBean!" + CacheAccess.class.getName();
-        final CacheAccess remote = (CacheAccess) context.lookup(rcal);
+        final String adminLookup = "ejb:jboss-eap-application-adminApp/ejb//CacheAdminBean!" + CacheAdmin.class.getName();
+        final CacheAdmin admin = (CacheAdmin) context.lookup(adminLookup);
+        admin.addToApp1Cache("App1One", "The App1 One entry");
+        // check that the Admin has the correct key entry local
+        admin.verifyApp1Cache("App1One", "The App1 One entry");
 
-        System.out.println("Response: " + remote.getFromLocalCache("One"));
-    }
+        final String appOneLookup = "ejb:jboss-eap-application-AppOne/ejb//CacheAccessBean!" + CacheAccess.class.getName();
+        final CacheAccess appOne = (CacheAccess) context.lookup(appOneLookup);
+        // check that the App1 cache has the correct replicated key entry
+        appOne.verifyApp1Cache("App1One", "The App1 One entry");
+}
 
 }

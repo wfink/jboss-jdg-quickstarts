@@ -41,7 +41,14 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jboss-eap-application-ejb</artifactId>
+            <artifactId>jboss-eap-application-AppOne-ejb</artifactId>
+            <version>${project.version}</version>
+            <type>ejb-client</type>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jboss-eap-application-adminApp-ejb</artifactId>
             <version>${project.version}</version>
             <type>ejb-client</type>
         </dependency>

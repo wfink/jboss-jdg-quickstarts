@@ -61,14 +61,14 @@ public class CacheAccessBean implements CacheAccess {
     }
 
     @Override
-    public void addToCache(String key, String value) {
+    public void addToLocalCache(String key, String value) {
         LOGGER.info("addTo progCache ("+key+","+value+")");
         Cache<String,String> cache = cacheManager.getCache("progCache");
         cache.put(key, value);
     }
 
     @Override
-    public String getFromCache(String key) {
+    public String getFromLocalCache(String key) {
         LOGGER.info("getFrom progCache("+key+")");
         Cache<String,String> cache = cacheManager.getCache("progCache");
         final String value = cache.get(key);
@@ -76,5 +76,14 @@ public class CacheAccessBean implements CacheAccess {
         
         final String nodeName = System.getProperty("jboss.node.name");
         return "Read progCache for key=" + key + " at server '" + nodeName + "' and get " + (value == null? "no value" : "value="+value);
+    }
+    
+    @Override
+    public void verifyApp1Cache(String key, String value) {
+        Cache<String,String> cache = cacheManager.getCache("App1Cache");
+        final String cacheValue = cache.get(key);
+        if((value==null && cacheValue!=null) || (value!=null && !value.equals(cacheValue)) ) {
+        	throw new IllegalStateException("The given key/value pair does not match the cache!");
+        }
     }
 }

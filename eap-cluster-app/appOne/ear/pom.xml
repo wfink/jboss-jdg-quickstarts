@@ -21,12 +21,12 @@
 
     <parent>
         <groupId>org.jboss.quickstarts.jdg</groupId>
-        <artifactId>jboss-eap-application</artifactId>
+        <artifactId>jboss-eap-application-AppOne</artifactId>
         <version>6.2.1-redhat-SNAPSHOT</version>
     </parent>
-    <artifactId>jboss-eap-application-ear</artifactId>
+    <artifactId>jboss-eap-application-AppOne-ear</artifactId>
     <packaging>ear</packaging>
-    <name>JBoss JDG Quickstart: jboss-eap-application - ear</name>
+    <name>JBoss JDG Quickstart: jboss-eap-application - AppOne - ear</name>
     <description>Create the deployable application archive
      Include the EJB and ISPN application together with the necessary API libraries
   </description>
@@ -41,7 +41,7 @@
         <!-- add the EJB and WEB project as dependency to include it in the EAR -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jboss-eap-application-ejb</artifactId>
+            <artifactId>jboss-eap-application-AppOne-ejb</artifactId>
             <type>ejb</type>
             <version>${project.version}</version>
         </dependency>
@@ -94,7 +94,7 @@
                     <modules>
                         <ejbModule>
                             <groupId>${project.groupId}</groupId>
-                            <artifactId>jboss-eap-application-ejb</artifactId>
+                            <artifactId>jboss-eap-application-AppOne-ejb</artifactId>
                             <bundleFileName>ejb.jar</bundleFileName>
                         </ejbModule>
                     </modules>

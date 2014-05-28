@@ -68,9 +68,9 @@ public class Client {
 
         final String rcal = "ejb:jboss-eap-application/ejb//CacheAccessBean!" + CacheAccess.class.getName();
         final CacheAccess remote = (CacheAccess) context.lookup(rcal);
-        remote.addToCache("One", "The first cache entry");
+        remote.addToLocalCache("One", "The first cache entry");
 
-        System.out.println("Response: " + remote.getFromCache("One"));
+        System.out.println("Response: " + remote.getFromLocalCache("One"));
     }
 
 }

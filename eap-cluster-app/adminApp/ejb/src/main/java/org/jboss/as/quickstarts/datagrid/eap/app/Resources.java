@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2014, Red Hat, Inc. and/or its affiliates, and individual
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
  * contributors by the @authors tag. See the copyright.txt in the
  * distribution for a full listing of individual contributors.
  *
@@ -16,12 +16,19 @@
  */
 package org.jboss.as.quickstarts.datagrid.eap.app;
 
-import javax.ejb.Remote;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 
-@Remote
-public interface CacheAccess {
+import org.infinispan.manager.DefaultCacheManager;
 
-    void addToCache(String key, String value);
+public class Resources {
 
-    String getFromCache(String key);
+    @Inject
+    App1CacheManagerProvider cacheManagerProvider;
+
+    @Produces
+    DefaultCacheManager getDefaultCacheManager() {
+        return cacheManagerProvider.getCacheManager();
+    }
+
 }

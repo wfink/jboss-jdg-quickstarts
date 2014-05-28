@@ -20,7 +20,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jboss.quickstarts.jdg</groupId>
-        <artifactId>jboss-eap-application</artifactId>
+        <artifactId>jboss-eap-application-AppOne</artifactId>
         <version>6.2.1-redhat-SNAPSHOT</version>
     </parent>
     <licenses>
@@ -31,9 +31,9 @@
         </license>
     </licenses>
 
-    <artifactId>jboss-eap-application-ejb</artifactId>
+    <artifactId>jboss-eap-application-AppOne-ejb</artifactId>
 
-    <name>JBoss JDG Quickstart: eap-application - ejb</name>
+    <name>JBoss JDG Quickstart: jboss-eap-application - AppOne - ejb</name>
     <url>http://maven.apache.org</url>
     <packaging>ejb</packaging>
 

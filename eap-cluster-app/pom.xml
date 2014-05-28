@@ -37,8 +37,8 @@
         </license>
     </licenses>
     <modules>
-        <module>ear</module>
-        <module>ejb</module>
+        <module>appOne</module>
+        <module>adminApp</module>
         <module>client</module>
     </modules>
     <properties>
