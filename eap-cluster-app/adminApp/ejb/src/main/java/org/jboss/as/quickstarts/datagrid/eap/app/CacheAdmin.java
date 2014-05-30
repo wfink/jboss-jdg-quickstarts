@@ -21,13 +21,67 @@ import javax.ejb.Remote;
 @Remote
 public interface CacheAdmin {
 
-    void addToApp1Cache(String key, String value);
+   /**
+    * Add the given entry to the App1Cache
+    */
+   void addToApp1Cache(String key, String value);
 
-    String getFromApp1Cache(String key);
+   /**
+    * Read from the App1Cache
+    * 
+    * @param key
+    *           the key for the entry to read
+    * @return the value for the given key
+    */
+   String getFromApp1Cache(String key);
 
-	void verifyApp1Cache(String key, String value);
+   /**
+    * Checks whether the given entry with key contains the value in App1Cache
+    * 
+    * @param key
+    * @param value
+    */
+   void verifyApp1Cache(String key, String value);
 
-	void verifyApp2Cache(String key, String value);
+   /**
+    * Checks whether the given entry with key contains the value in App2Cache
+    * 
+    * @param key
+    * @param value
+    */
+   void verifyApp2Cache(String key, String value);
 
-	void addToApp2Cache(String key, String value);
+   /**
+    * Add the given entry to the App2Cache
+    */
+   void addToApp2Cache(String key, String value);
+
+   /**
+    * Add the given entry to the App2Cache and let the transaction fail if requested. As the
+    * App2Cache is transactional the entry should not exists if the transaction of the method is
+    * marked for rollback after the entry is added to the cache.
+    * 
+    * @param key
+    * @param value
+    * @param transactionFailure
+    *           If <code>true</code> the transaction will be marked as rollbackOnly
+    */
+   void addToApp2Cache(String key, String value, boolean transactionFailure);
+
+   /**
+    * Check whether the App2Cache contain a entry with the given key
+    * 
+    * @param key
+    *           the key for the entry to check
+    * @return <code>true</code> if the entry exists
+    */
+   boolean containsApp2Key(String key);
+
+   /**
+    * Delete the entry from cache
+    * 
+    * @param key
+    *           entry key which should be removed
+    */
+   void removeFromApp2Cache(String key);
 }

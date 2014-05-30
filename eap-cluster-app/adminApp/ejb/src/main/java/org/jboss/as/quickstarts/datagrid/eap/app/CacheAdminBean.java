@@ -20,90 +20,120 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.naming.InitialContext;
 
 import org.infinispan.Cache;
 import org.infinispan.manager.DefaultCacheManager;
 import org.jboss.logging.Logger;
 
 /**
- * <p>The main bean called by the standalone client.</p>
- * <p>The sub applications, deployed in different servers are called direct or via indirect naming to hide the lookup name and use
- * a configured name via comp/env environment.</p>
+ * <p>
+ * The administration bean called by the standalone client.
+ * </p>
+ * <p>
+ * Used to create check and remove entries to the different caches
+ * </p>
  * 
  * @author <a href="mailto:wfink@redhat.com">Wolf-Dieter Fink</a>
  */
 @Stateless
 public class CacheAdminBean implements CacheAdmin {
-    private static final Logger LOGGER = Logger.getLogger(CacheAdminBean.class);
-    @Resource
-    SessionContext context;
+   private static final Logger LOGGER = Logger.getLogger(CacheAdminBean.class);
+   @Resource
+   SessionContext context;
 
-    @Inject
-    DefaultCacheManager cacheManager;
+   @Inject
+   DefaultCacheManager app1CacheManager;
 
-    @Inject @App2Cache
-    DefaultCacheManager cacheManager2;
+   @Inject
+   @App2Cache
+   DefaultCacheManager app2CacheManager;
 
-  /**
-   * The context to invoke foreign EJB's as the SessionContext can not be used for that.
-   */
-    private InitialContext iCtx;
+   /**
+    * Initialize and store the context for the EJB invocations.
+    */
+   @PostConstruct
+   public void init() {
+      LOGGER.info("CacheManagers:");
+      LOGGER.info("App1 " + app1CacheManager);
+      LOGGER.info("App2 " + app2CacheManager);
+   }
 
-//    @EJB(lookup = "ejb:jboss-ejb-multi-server-app-one/ejb//AppOneBean!org.jboss.as.quickstarts.ejb.multi.server.app.AppOne")
-//    AppOne appOneProxy;
-//    @EJB(lookup = "ejb:jboss-ejb-multi-server-app-two/ejb//AppTwoBean!org.jboss.as.quickstarts.ejb.multi.server.app.AppTwo")
-//    AppTwo appTwoProxy;
+   @Override
+   public void addToApp1Cache(String key, String value) {
+      LOGGER.info("addTo app1Cache (" + key + "," + value + ")");
+      Cache<String, String> cache = app1CacheManager.getCache("App1Cache");
+      cache.put(key, value);
+   }
 
-  /**
-   * Initialize and store the context for the EJB invocations.
-   */
-    @PostConstruct
-    public void init() {
-    }
+   @Override
+   public void verifyApp1Cache(String key, String value) {
+      Cache<String, String> cache = app1CacheManager.getCache("App1Cache");
+      final String cacheValue = cache.get(key);
+      if ((value == null && cacheValue != null) || (value != null && !value.equals(cacheValue))) {
+         throw new IllegalStateException("The given key/value pair does not match the cache!");
+      }
+   }
 
-    @Override
-    public void addToApp1Cache(String key, String value) {
-        LOGGER.info("addTo app1Cache ("+key+","+value+")");
-        Cache<String,String> cache = cacheManager.getCache("App1Cache");
-        cache.put(key, value);
-    }
-    
-    @Override
-    public void verifyApp1Cache(String key, String value) {
-        Cache<String,String> cache = cacheManager.getCache("App1Cache");
-        final String cacheValue = cache.get(key);
-        if((value==null && cacheValue!=null) || (value!=null && !value.equals(cacheValue)) ) {
-        	throw new IllegalStateException("The given key/value pair does not match the cache!");
-        }
-    }
+   @Override
+   public String getFromApp1Cache(String key) {
+      LOGGER.info("getFrom progCache(" + key + ")");
+      Cache<String, String> cache = app1CacheManager.getCache("App1Cache");
+      final String value = cache.get(key);
+      LOGGER.info("value=" + value);
 
-    @Override
-    public String getFromApp1Cache(String key) {
-        LOGGER.info("getFrom progCache("+key+")");
-        Cache<String,String> cache = cacheManager.getCache("App1Cache");
-        final String value = cache.get(key);
-        LOGGER.info("value=" + value);
-        
-        final String nodeName = System.getProperty("jboss.node.name");
-        return "Read app1Cache for key=" + key + " at server '" + nodeName + "' and get " + (value == null? "no value" : "value="+value);
-    }
+      final String nodeName = System.getProperty("jboss.node.name");
+      return "Read app1Cache for key=" + key + " at server '" + nodeName + "' and get "
+            + (value == null ? "no value" : "value=" + value);
+   }
 
-    @Override
-    public void addToApp2Cache(String key, String value) {
-        LOGGER.info("addTo app2Cache ("+key+","+value+")");
-        Cache<String,String> cache = cacheManager.getCache("App2Cache");
-        cache.put(key, value);
-    }
-    
-    @Override
-    public void verifyApp2Cache(String key, String value) {
-        Cache<String,String> cache = cacheManager.getCache("App2Cache");
-        final String cacheValue = cache.get(key);
-        if((value==null && cacheValue!=null) || (value!=null && !value.equals(cacheValue)) ) {
-        	throw new IllegalStateException("The given key/value pair does not match the cache!");
-        }
-    }
+   @Override
+   public void addToApp2Cache(String key, String value) {
+      LOGGER.info("addTo app2Cache (" + key + "," + value + ")");
+      Cache<String, String> cache = app2CacheManager.getCache("App2Cache");
+      cache.put(key, value);
+   }
+
+   @Override
+   public void removeFromApp2Cache(String key) {
+      LOGGER.info("removeFrom app2Cache (" + key + ")");
+      Cache<String, String> cache = app2CacheManager.getCache("App2Cache");
+      cache.remove(key);
+   }
+
+   @Override
+   @TransactionAttribute(TransactionAttributeType.REQUIRED)
+   public void addToApp2Cache(String key, String value, boolean transactionFailure) {
+      Cache<String, String> cache = app2CacheManager.getCache("App2Cache");
+      if (transactionFailure && cache.containsKey(key)) {
+         // ensure that the key does not exists before we add it 
+         throw new IllegalStateException("Key " + key + " exists!");
+      }
+      addToApp2Cache(key, value);
+
+      if (transactionFailure) {
+         // set the rollback flag and let the transaction fail
+         context.setRollbackOnly();
+      }
+   }
+
+   @Override
+   public boolean containsApp2Key(String key) {
+      Cache<String, String> cache = app2CacheManager.getCache("App2Cache");
+      final boolean contains = cache.containsKey(key);
+      LOGGER.info("app2Cache " + (contains ? "" : "does not ") + "contain a entity with key=" + key);
+      return contains;
+   }
+
+   @Override
+   public void verifyApp2Cache(String key, String value) {
+      Cache<String, String> cache = app2CacheManager.getCache("App2Cache");
+      final String cacheValue = cache.get(key);
+      if ((value == null && cacheValue != null) || (value != null && !value.equals(cacheValue))) {
+         throw new IllegalStateException("The given key/value pair does not match the cache!");
+      }
+   }
 
 }

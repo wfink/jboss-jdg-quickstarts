@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * Copyright 2014, Red Hat, Inc. and/or its affiliates, and individual
  * contributors by the @authors tag. See the copyright.txt in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,22 +21,28 @@ import javax.inject.Inject;
 
 import org.infinispan.manager.DefaultCacheManager;
 
-public class Resources {
+/**
+ * 
+ * Producer for cache manager injection.
+ * 
+ * @author "Wolf-Dieter Fink"
+ */
+public final class Resources {
 
-    @Inject
-    App1CacheManagerProvider cacheManagerProvider;
-    @Inject
-    App2CacheManagerProvider cacheManagerProvider2;
+   @Inject
+   App1CacheManagerProvider cacheManagerProvider;
+   @Inject
+   App2CacheManagerProvider cacheManagerProvider2;
 
-    @Produces
-    DefaultCacheManager getApp1CacheManager() {
-        return cacheManagerProvider.getCacheManager();
-    }
+   @Produces
+   DefaultCacheManager getApp1CacheManager() {
+      return cacheManagerProvider.getCacheManager();
+   }
 
-    @Produces
-    @App2Cache
-    DefaultCacheManager getApp2CacheManager() {
-        return cacheManagerProvider.getCacheManager();
-    }
+   @Produces
+   @App2Cache
+   DefaultCacheManager getApp2CacheManager() {
+      return cacheManagerProvider2.getCacheManager();
+   }
 
 }

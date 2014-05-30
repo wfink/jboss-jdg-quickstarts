@@ -21,9 +21,9 @@ import javax.ejb.Remote;
 @Remote
 public interface CacheAccess {
 
-    void addToLocalCache(String key, String value);
+   void addToLocalCache(String key, String value);
 
-    String getFromLocalCache(String key);
+   String getFromLocalCache(String key);
 
-	void verifyApp1Cache(String key, String value);
+   void verifyApp1Cache(String key, String value);
 }

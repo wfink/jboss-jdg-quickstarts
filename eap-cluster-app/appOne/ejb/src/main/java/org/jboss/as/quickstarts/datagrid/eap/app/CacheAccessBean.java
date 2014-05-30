@@ -41,7 +41,7 @@ public class CacheAccessBean implements CacheAccess {
     SessionContext context;
 
     @Inject
-    DefaultCacheManager cacheManager;
+    DefaultCacheManager app1CacheManager;
 
   /**
    * The context to invoke foreign EJB's as the SessionContext can not be used for that.
@@ -63,14 +63,14 @@ public class CacheAccessBean implements CacheAccess {
     @Override
     public void addToLocalCache(String key, String value) {
         LOGGER.info("addTo progCache ("+key+","+value+")");
-        Cache<String,String> cache = cacheManager.getCache("progCache");
+        Cache<String,String> cache = app1CacheManager.getCache("progCache");
         cache.put(key, value);
     }
 
     @Override
     public String getFromLocalCache(String key) {
         LOGGER.info("getFrom progCache("+key+")");
-        Cache<String,String> cache = cacheManager.getCache("progCache");
+        Cache<String,String> cache = app1CacheManager.getCache("progCache");
         final String value = cache.get(key);
         LOGGER.info("value=" + value);
         
@@ -80,7 +80,7 @@ public class CacheAccessBean implements CacheAccess {
     
     @Override
     public void verifyApp1Cache(String key, String value) {
-        Cache<String,String> cache = cacheManager.getCache("App1Cache");
+        Cache<String,String> cache = app1CacheManager.getCache("App1Cache");
         final String cacheValue = cache.get(key);
         if((value==null && cacheValue!=null) || (value!=null && !value.equals(cacheValue)) ) {
         	throw new IllegalStateException("The given key/value pair does not match the cache!");
