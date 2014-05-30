@@ -8,7 +8,7 @@ import org.infinispan.manager.DefaultCacheManager;
 public class Resources {
 
     @Inject
-    AppCacheManagerProvider cacheManagerProvider;
+    AppOneCacheManagerProvider cacheManagerProvider;
 
     @Produces
     DefaultCacheManager getDefaultCacheManager() {

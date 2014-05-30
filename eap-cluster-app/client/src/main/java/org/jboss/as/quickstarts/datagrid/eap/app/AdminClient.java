@@ -80,8 +80,8 @@ public class AdminClient {
       admin.verifyApp1Cache("App1One", "The App1 One entry");
 
       final String appOneLookup = "ejb:jboss-eap-application-AppOne/ejb//CacheAccessBean!"
-            + CacheAccess.class.getName();
-      final CacheAccess appOne = (CacheAccess) context.lookup(appOneLookup);
+            + AppOneCacheAccess.class.getName();
+      final AppOneCacheAccess appOne = (AppOneCacheAccess) context.lookup(appOneLookup);
       // check that the App1 cache has the correct replicated key entry
       appOne.verifyApp1Cache("App1One", "The App1 One entry");
 

@@ -35,8 +35,8 @@ import org.infinispan.manager.DefaultCacheManager;
  * @author Wolf-Dieter Fink
  */
 @ApplicationScoped
-public class AppCacheManagerProvider {
-    private static final Logger log = Logger.getLogger(AppCacheManagerProvider.class.getName());
+public class AppOneCacheManagerProvider {
+    private static final Logger log = Logger.getLogger(AppOneCacheManagerProvider.class.getName());
     private DefaultCacheManager manager;
 
     public DefaultCacheManager getCacheManager() {

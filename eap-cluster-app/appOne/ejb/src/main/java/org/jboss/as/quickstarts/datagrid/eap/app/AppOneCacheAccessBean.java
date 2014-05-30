@@ -35,8 +35,8 @@ import org.jboss.logging.Logger;
  * @author <a href="mailto:wfink@redhat.com">Wolf-Dieter Fink</a>
  */
 @Stateless
-public class CacheAccessBean implements CacheAccess {
-    private static final Logger LOGGER = Logger.getLogger(CacheAccessBean.class);
+public class AppOneCacheAccessBean implements AppOneCacheAccess {
+    private static final Logger LOGGER = Logger.getLogger(AppOneCacheAccessBean.class);
     @Resource
     SessionContext context;
 

@@ -66,8 +66,8 @@ public class Client {
         props.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
         InitialContext context = new InitialContext(props);
 
-        final String rcal = "ejb:jboss-eap-application/ejb//CacheAccessBean!" + CacheAccess.class.getName();
-        final CacheAccess remote = (CacheAccess) context.lookup(rcal);
+        final String rcal = "ejb:jboss-eap-application/ejb//CacheAccessBean!" + AppOneCacheAccess.class.getName();
+        final AppOneCacheAccess remote = (AppOneCacheAccess) context.lookup(rcal);
         remote.addToLocalCache("One", "The first cache entry");
 
         System.out.println("Response: " + remote.getFromLocalCache("One"));

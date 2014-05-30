@@ -19,7 +19,7 @@ package org.jboss.as.quickstarts.datagrid.eap.app;
 import javax.ejb.Remote;
 
 @Remote
-public interface CacheAccess {
+public interface AppOneCacheAccess {
 
    void addToLocalCache(String key, String value);
 
