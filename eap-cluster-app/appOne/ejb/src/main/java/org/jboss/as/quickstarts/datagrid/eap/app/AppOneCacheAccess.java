@@ -16,6 +16,8 @@
  */
 package org.jboss.as.quickstarts.datagrid.eap.app;
 
+import java.util.Set;
+
 import javax.ejb.Remote;
 
 @Remote
@@ -26,4 +28,6 @@ public interface AppOneCacheAccess {
    String getFromLocalCache(String key);
 
    void verifyApp1Cache(String key, String value);
+
+   Set<String> verifyApp2CacheRemote(String key, String value);
 }

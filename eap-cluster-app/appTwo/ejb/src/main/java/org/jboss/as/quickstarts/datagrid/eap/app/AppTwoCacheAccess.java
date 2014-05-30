@@ -20,5 +20,5 @@ import javax.ejb.Remote;
 
 @Remote
 public interface AppTwoCacheAccess {
-   void verifyApp2Cache(String key, String value);
+   String verifyApp2Cache(String key, String value);
 }

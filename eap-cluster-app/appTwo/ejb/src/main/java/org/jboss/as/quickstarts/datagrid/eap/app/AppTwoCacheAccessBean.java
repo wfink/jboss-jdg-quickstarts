@@ -16,8 +16,6 @@
  */
 package org.jboss.as.quickstarts.datagrid.eap.app;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -44,11 +42,12 @@ public class AppTwoCacheAccessBean implements AppTwoCacheAccess {
    DefaultCacheManager appCacheManager;
 
    @Override
-   public void verifyApp2Cache(String key, String value) {
+   public String verifyApp2Cache(String key, String value) {
       Cache<String, String> cache = appCacheManager.getCache("App2Cache");
       final String cacheValue = cache.get(key);
       if ((value == null && cacheValue != null) || (value != null && !value.equals(cacheValue))) {
          throw new IllegalStateException("The given key/value pair does not match the cache!");
       }
+      return System.getProperty("jboss.node.name");
    }
 }

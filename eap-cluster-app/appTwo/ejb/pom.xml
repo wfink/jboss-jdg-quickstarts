@@ -67,6 +67,11 @@
                 <configuration>
                     <ejbVersion>3.1</ejbVersion>
                     <generateClient>true</generateClient>
+                    <clientExcludes>
+                        <!-- ensure that the classes for injection are not provided -->
+                        <clientExclude>**/*Resources*</clientExclude>
+                        <clientExclude>**/*Provider*</clientExclude>
+                    </clientExcludes>
                     <archive>
                         <addMavenDescriptor>false</addMavenDescriptor>
                     </archive>

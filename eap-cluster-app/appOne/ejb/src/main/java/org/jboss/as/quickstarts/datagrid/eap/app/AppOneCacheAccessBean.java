@@ -16,8 +16,13 @@
  */
 package org.jboss.as.quickstarts.datagrid.eap.app;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -28,62 +33,77 @@ import org.infinispan.manager.DefaultCacheManager;
 import org.jboss.logging.Logger;
 
 /**
- * <p>The main bean called by the standalone client.</p>
- * <p>The sub applications, deployed in different servers are called direct or via indirect naming to hide the lookup name and use
- * a configured name via comp/env environment.</p>
+ * <p>
+ * The main bean called by the standalone client.
+ * </p>
+ * <p>
+ * The sub applications, deployed in different servers are called direct or via indirect naming to
+ * hide the lookup name and use a configured name via comp/env environment.
+ * </p>
  * 
  * @author <a href="mailto:wfink@redhat.com">Wolf-Dieter Fink</a>
  */
 @Stateless
 public class AppOneCacheAccessBean implements AppOneCacheAccess {
-    private static final Logger LOGGER = Logger.getLogger(AppOneCacheAccessBean.class);
-    @Resource
-    SessionContext context;
+   private static final Logger LOGGER = Logger.getLogger(AppOneCacheAccessBean.class);
+   @Resource
+   SessionContext context;
 
-    @Inject
-    DefaultCacheManager app1CacheManager;
+   @Inject
+   DefaultCacheManager app1CacheManager;
 
-  /**
-   * The context to invoke foreign EJB's as the SessionContext can not be used for that.
-   */
-    private InitialContext iCtx;
+   /**
+    * The context to invoke foreign EJB's as the SessionContext can not be used for that.
+    */
+   private InitialContext iCtx;
 
-//    @EJB(lookup = "ejb:jboss-ejb-multi-server-app-one/ejb//AppOneBean!org.jboss.as.quickstarts.ejb.multi.server.app.AppOne")
-//    AppOne appOneProxy;
-//    @EJB(lookup = "ejb:jboss-ejb-multi-server-app-two/ejb//AppTwoBean!org.jboss.as.quickstarts.ejb.multi.server.app.AppTwo")
-//    AppTwo appTwoProxy;
+   @EJB(lookup = "ejb:jboss-eap-application-AppTwo/ejb/AppTwoCacheAccessBean!org.jboss.as.quickstarts.datagrid.eap.app.AppTwoCacheAccess")
+   AppTwoCacheAccess appTwoProxy;
 
-  /**
-   * Initialize and store the context for the EJB invocations.
-   */
-    @PostConstruct
-    public void init() {
-    }
+   /**
+    * Initialize and store the context for the EJB invocations.
+    */
+   @PostConstruct
+   public void init() {
+   }
 
-    @Override
-    public void addToLocalCache(String key, String value) {
-        LOGGER.info("addTo progCache ("+key+","+value+")");
-        Cache<String,String> cache = app1CacheManager.getCache("progCache");
-        cache.put(key, value);
-    }
+   @Override
+   public void addToLocalCache(String key, String value) {
+      LOGGER.info("addTo progCache (" + key + "," + value + ")");
+      Cache<String, String> cache = app1CacheManager.getCache("progCache");
+      cache.put(key, value);
+   }
 
-    @Override
-    public String getFromLocalCache(String key) {
-        LOGGER.info("getFrom progCache("+key+")");
-        Cache<String,String> cache = app1CacheManager.getCache("progCache");
-        final String value = cache.get(key);
-        LOGGER.info("value=" + value);
-        
-        final String nodeName = System.getProperty("jboss.node.name");
-        return "Read progCache for key=" + key + " at server '" + nodeName + "' and get " + (value == null? "no value" : "value="+value);
-    }
-    
-    @Override
-    public void verifyApp1Cache(String key, String value) {
-        Cache<String,String> cache = app1CacheManager.getCache("App1Cache");
-        final String cacheValue = cache.get(key);
-        if((value==null && cacheValue!=null) || (value!=null && !value.equals(cacheValue)) ) {
-        	throw new IllegalStateException("The given key/value pair does not match the cache!");
-        }
-    }
+   @Override
+   public String getFromLocalCache(String key) {
+      LOGGER.info("getFrom progCache(" + key + ")");
+      Cache<String, String> cache = app1CacheManager.getCache("progCache");
+      final String value = cache.get(key);
+      LOGGER.info("value=" + value);
+
+      final String nodeName = System.getProperty("jboss.node.name");
+      return "Read progCache for key=" + key + " at server '" + nodeName + "' and get "
+            + (value == null ? "no value" : "value=" + value);
+   }
+
+   @Override
+   public void verifyApp1Cache(String key, String value) {
+      Cache<String, String> cache = app1CacheManager.getCache("App1Cache");
+      final String cacheValue = cache.get(key);
+      if ((value == null && cacheValue != null) || (value != null && !value.equals(cacheValue))) {
+         throw new IllegalStateException("The given key/value pair does not match the cache!");
+      }
+   }
+
+   @Override
+   public Set<String> verifyApp2CacheRemote(String key, String value) {
+      HashSet<String> results = new HashSet<String>();
+
+      for (int i = 0; i < 10; i++) {
+         results.add(this.appTwoProxy.verifyApp2Cache(key, value));
+      }
+      LOGGER.info("Verified 10 times, see " + results.size() + "node(s) " + results);
+
+      return results;
+   }
 }

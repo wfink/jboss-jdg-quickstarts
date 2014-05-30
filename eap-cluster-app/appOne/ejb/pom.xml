@@ -55,6 +55,12 @@
             <artifactId>cdi-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.quickstarts.jdg</groupId>
+            <artifactId>jboss-eap-application-AppTwo-ejb</artifactId>
+            <version>${project.version}</version>
+            <type>ejb-client</type>
+        </dependency>
     </dependencies>
 
     <build>

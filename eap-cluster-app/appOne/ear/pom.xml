@@ -97,6 +97,11 @@
                             <artifactId>jboss-eap-application-AppOne-ejb</artifactId>
                             <bundleFileName>ejb.jar</bundleFileName>
                         </ejbModule>
+                        <ejbClientModule>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>jboss-eap-application-AppTwo-ejb</artifactId>
+                            <bundleDir>lib</bundleDir>
+                        </ejbClientModule>
                     </modules>
                     <archive>
                         <addMavenDescriptor>false</addMavenDescriptor>
