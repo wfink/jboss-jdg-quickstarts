@@ -1,0 +1,23 @@
+<jboss-deployment-structure>
+
+    <ear-subdeployments-isolated>true</ear-subdeployments-isolated>
+    <sub-deployment name="ejb.jar">
+        <exclusions>
+            <module name="org.jgroups" />
+        </exclusions>
+        <!-- 
+        <dependencies>
+            < - - this dependency is needed because the cache configuration is read from XML - - >
+            <module name="org.jboss.staxmapper"/>
+        </dependencies>
+         -->
+        <resources>
+            <resource-root path="infinispan-core-5.2.7.Final-redhat-1.jar" />
+            <resource-root path="infinispan-commons-6.0.3.Final-redhat-3.jar"/>
+            <resource-root path="jboss-marshalling-1.4.2.Final-redhat-2.jar" />
+            <resource-root path="jboss-marshalling-river-1.4.2.Final-redhat-2.jar" />
+            <resource-root path="jgroups-3.4.3.Final-redhat-1.jar"/>
+        </resources>
+    </sub-deployment>
+
+</jboss-deployment-structure>

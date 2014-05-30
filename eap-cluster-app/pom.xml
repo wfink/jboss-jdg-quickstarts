@@ -38,6 +38,7 @@
     </licenses>
     <modules>
         <module>appOne</module>
+        <module>appTwo</module>
         <module>adminApp</module>
         <module>client</module>
     </modules>
