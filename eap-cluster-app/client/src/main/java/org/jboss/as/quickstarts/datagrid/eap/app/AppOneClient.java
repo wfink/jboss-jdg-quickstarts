@@ -32,24 +32,45 @@ import org.jboss.ejb.client.remoting.ConfigBasedEJBClientContextSelector;
 
 /**
  * <p>
- * A simple standalone application which uses the JBoss API to invoke the MainApp demonstration Bean.
- * </p>
- * <p>
- * With the boolean property <i>UseScopedContext</i> the basic example or the example with the scoped-environment will be called.
+ * A simple standalone application which uses the JBoss API to invoke the AppOne demonstration Bean.
  * </p>
  * 
  * @author <a href="mailto:wfink@redhat.com">Wolf-Dieter Fink</a>
  */
-public class ClientAppOne {
+public class AppOneClient {
 
-    /**
-     * @param args no args needed
-     * @throws Exception 
-     */
+   /**
+    * @param args optional to override the connect parameter
+    *           <ul>
+    *           <li>hostname for AdminApp (default localhost)</li>
+    *           <li>port for AdminApp (default 4447)</li>
+    *           <li>hostname for AppOne (default localhost)</li>
+    *           <li>port for AppOne (default 4547)</li>
+    *           </ul>
+    * @throws Exception
+    */
     public static void main(String[] args) throws Exception {
-        // suppress output of client messages
-        Logger.getLogger("org.jboss").setLevel(Level.OFF);
-        Logger.getLogger("org.xnio").setLevel(Level.OFF);
+       String hostAdmin = "localhost";
+       String portAdmin = "4447";
+       String hostAppOne = "localhost";
+       String portAppOne = "4547";
+       
+       // suppress output of client messages
+       Logger.getLogger("org.jboss").setLevel(Level.OFF);
+       Logger.getLogger("org.xnio").setLevel(Level.OFF);
+
+       if(args.length > 0) {
+          hostAdmin = args[0];
+       }
+       if(args.length > 1) {
+          portAdmin = args[1];
+       }
+       if(args.length > 2) {
+          hostAppOne = args[2];
+       }
+       if(args.length > 3) {
+          portAppOne = args[3];
+       }
         
         Properties p = new Properties();
         p.put("remote.connectionprovider.create.options.org.xnio.Options.SSL_ENABLED", "false");
@@ -71,6 +92,8 @@ public class ClientAppOne {
         props.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
         InitialContext context = new InitialContext(props);
 
+        System.out.println("        Add a value to App2Cache with the AdminApp");
+
         final String adminLookup = "ejb:jboss-eap-application-adminApp/ejb//CacheAdminBean!" + CacheAdmin.class.getName();
         final CacheAdmin admin = (CacheAdmin) context.lookup(adminLookup);
         admin.addToApp2Cache("App2Entry", "The App2 entry");
@@ -79,10 +102,12 @@ public class ClientAppOne {
 
         final String appOneLookup = "ejb:jboss-eap-application-AppOne/ejb//AppOneCacheAccessBean!" + AppOneCacheAccess.class.getName();
         final AppOneCacheAccess appOne = (AppOneCacheAccess) context.lookup(appOneLookup);
+
+        System.out.println("        Access the App2Cache from the AppOneServer by using the clustered EJB@AppTwoServer");
         // run AppOne remote access to AppTwo and provide the cluster nodes 
         Set<String> app2nodes = appOne.verifyApp2CacheRemote("App2Entry", "The App2 entry");
 
-        System.out.println("Verify App2 cache, see the following nodes : " + app2nodes);
+        System.out.println("          success : received the following node names for EJB invocation : " + app2nodes);
     }
 
 }

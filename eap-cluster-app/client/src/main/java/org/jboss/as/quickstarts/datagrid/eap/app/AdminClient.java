@@ -45,25 +45,49 @@ public class AdminClient {
 
    /**
     * @param args
-    *           no args needed
+    *           optional to override the connect parameter
+    *           <ul>
+    *           <li>hostname for AdminApp (default localhost)</li>
+    *           <li>port for AdminApp (default 4447)</li>
+    *           <li>hostname for AppOne (default localhost)</li>
+    *           <li>port for AppOne (default 4547)</li>
+    *           </ul>
     * @throws Exception
     */
    public static void main(String[] args) throws Exception {
+      String hostAdmin = "localhost";
+      String portAdmin = "4447";
+      String hostAppOne = "localhost";
+      String portAppOne = "4547";
+      
       // suppress output of client messages
       Logger.getLogger("org.jboss").setLevel(Level.OFF);
       Logger.getLogger("org.xnio").setLevel(Level.OFF);
 
+      if(args.length > 0) {
+         hostAdmin = args[0];
+      }
+      if(args.length > 1) {
+         portAdmin = args[1];
+      }
+      if(args.length > 2) {
+         hostAppOne = args[2];
+      }
+      if(args.length > 3) {
+         portAppOne = args[3];
+      }
+      
       Properties p = new Properties();
       p.put("remote.connectionprovider.create.options.org.xnio.Options.SSL_ENABLED", "false");
       p.put("remote.connections", "admin,appOne");
-      p.put("remote.connection.admin.port", "4447");
-      p.put("remote.connection.admin.host", "localhost");
-      //        p.put("remote.connection.admin.username", "quickuser");
-      //        p.put("remote.connection.admin.password", "quick-123");
-      p.put("remote.connection.appOne.port", "4547");
-      p.put("remote.connection.appOne.host", "localhost");
-      //        p.put("remote.connection.appOne.username", "quickuser");
-      //        p.put("remote.connection.appOne.password", "quick-123");
+      p.put("remote.connection.admin.port", portAdmin);
+      p.put("remote.connection.admin.host", hostAdmin);
+      p.put("remote.connection.admin.username", "quickuser");
+      p.put("remote.connection.admin.password", "quick-123");
+      p.put("remote.connection.appOne.port", portAppOne);
+      p.put("remote.connection.appOne.host", hostAppOne);
+      p.put("remote.connection.appOne.username", "quickuser");
+      p.put("remote.connection.appOne.password", "quick-123");
 
       EJBClientConfiguration cc = new PropertiesBasedEJBClientConfiguration(p);
       ContextSelector<EJBClientContext> selector = new ConfigBasedEJBClientContextSelector(cc);
@@ -75,32 +99,35 @@ public class AdminClient {
 
       final String adminLookup = "ejb:jboss-eap-application-adminApp/ejb//CacheAdminBean!" + CacheAdmin.class.getName();
       final CacheAdmin admin = (CacheAdmin) context.lookup(adminLookup);
+
+      System.out.println("        Add a value to App1Cache with the AdminApp and check on the same instance that the value is correct added");
       admin.addToApp1Cache("App1One", "The App1 One entry");
       // check that the Admin has the correct key entry local
       admin.verifyApp1Cache("App1One", "The App1 One entry");
+      System.out.println("          success");
 
       final String appOneLookup = "ejb:jboss-eap-application-AppOne/ejb//AppOneCacheAccessBean!"
             + AppOneCacheAccess.class.getName();
       final AppOneCacheAccess appOne = (AppOneCacheAccess) context.lookup(appOneLookup);
+      
+      System.out.println("        Check the previous added value of App1Cache by accessing the AppOne Server");
       // check that the App1 cache has the correct replicated key entry
       appOne.verifyApp1Cache("App1One", "The App1 One entry");
+      System.out.println("          success");
 
+      System.out.println("        Add a value to App2Cache and check on the same instance that the value is correct added");
       admin.addToApp2Cache("One", "The App2 One entry");
       admin.verifyApp2Cache("One", "The App2 One entry");
+      System.out.println("          success");
 
       // check that the cache is transactional
-      try {
-         admin.removeFromApp2Cache("SouldNeverExist");
-         admin.addToApp2Cache("SouldNeverExist", "This value should not available as the transaction fail", true);
-         if (admin.containsApp2Key("SouldNeverExist")) {
-            System.out.println("   ERROR the cache App2 is not transactional");
-         } else {
-            System.out.println("   INFO  the cache App2 is transactional");
-         }
-      } catch (RuntimeException e) {
-         System.out.println("   ERROR add throws RuntimeException!");
-         e.printStackTrace();
+      System.out.println("        Check whether changes to a cache are rollbacked if the transaction fail");
+      admin.removeFromApp2Cache("SouldNeverExist");
+      admin.addToApp2Cache("SouldNeverExist", "This value should not available as the transaction fail", true);
+      if (admin.containsApp2Key("SouldNeverExist")) {
+         throw new RuntimeException("Unexpected result, the key exists after transaction rollback!");
+      } else {
+         System.out.println("        The cache App2 work as expected on rollback");
       }
    }
-
 }
