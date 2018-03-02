@@ -1,0 +1,5 @@
+batch
+/subsystem=datagrid-infinispan/cache-container=clustered/configurations=CONFIGURATIONS/distributed-cache-configuration=PartitionHandling:add()
+/subsystem=datagrid-infinispan/cache-container=clustered/configurations=CONFIGURATIONS/distributed-cache-configuration=PartitionHandling/partition-handling=PARTITION_HANDLING:add(when-split="ALLOW_READ_WRITES", merge-policy="org.jboss.as.quickstarts.datagrid.conflict.management.CustomEntryMergePolicy")
+/subsystem=datagrid-infinispan/cache-container=clustered/distributed-cache=PartitionHandling:add(configuration=PartitionHandling)
+run-batch
