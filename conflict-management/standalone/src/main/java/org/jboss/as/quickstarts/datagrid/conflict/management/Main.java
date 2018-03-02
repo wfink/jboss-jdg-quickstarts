@@ -18,6 +18,8 @@ package org.jboss.as.quickstarts.datagrid.conflict.management;
  */
 
 import java.io.Console;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import org.infinispan.Cache;
 import org.infinispan.configuration.cache.CacheMode;
@@ -25,7 +27,14 @@ import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.configuration.global.GlobalConfiguration;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
+import org.infinispan.conflict.ConflictManager;
+import org.infinispan.conflict.ConflictManagerFactory;
+import org.infinispan.container.entries.CacheEntry;
+import org.infinispan.container.entries.NullCacheEntry;
+import org.infinispan.container.versioning.EntryVersion;
 import org.infinispan.manager.DefaultCacheManager;
+import org.infinispan.metadata.Metadata;
+import org.infinispan.remoting.transport.Address;
 import org.infinispan.transaction.lookup.GenericTransactionManagerLookup;
 
 /**
@@ -50,6 +59,8 @@ public class Main {
       
       final Configuration loc = new ConfigurationBuilder().jmxStatistics().enable() // Enable JMX statistics
                .clustering().cacheMode(CacheMode.DIST_SYNC).hash().numOwners(2).stateTransfer().chunkSize(512).fetchInMemoryState(true)
+               // NOT WORKING  it is not invoked automatically as expected
+               .partitionHandling().mergePolicy(new CustomEntryMergePolicy())
                .transaction().transactionManagerLookup(new GenericTransactionManagerLookup())
                .build();
       
@@ -62,7 +73,9 @@ public class Main {
       String key = con.readLine(msgEnterKey);
       String value = con.readLine("Enter value: ");
 
+      con.printf("     Insert key=%s value=%s", key,value);
       String oldValue = cache.put(key, value);
+      con.printf("  Done\n");
 
       if (oldValue != null) {
          con.printf("   Replace old value : %s\n", oldValue);
@@ -142,38 +155,83 @@ public class Main {
       con.printf("  Cache size is %d\n", cache.size());
    }
 
+   private void useMergePolicy() {
+      ConflictManager<String, String> cm = ConflictManagerFactory.get(cache.getAdvancedCache());
+      cm.resolveConflicts(new CustomEntryMergePolicy());
+   }
+
+   private void resolveConflict() {
+      ConflictManager<String, String> cm = ConflictManagerFactory.get(cache.getAdvancedCache());
+
+      con.printf("  Try to merge conflicts\n");
+
+      Stream<Map<Address, CacheEntry<String, String>>> stream = cm.getConflicts();
+      stream.forEach(map -> {
+         con.printf("Conflict for nodes %s\n", map.keySet());
+         String key = null;
+         CacheEntry<String,String> solvedEntry = null;
+         for (CacheEntry<String, String> entry : map.values()) {
+            con.printf("    CacheEntry is %s\n", entry.toString());
+            if(!(entry instanceof NullCacheEntry)) {  // ignore when missing on a node
+               key = entry.getKey();
+               solvedEntry = entry;
+               con.printf("    conflict for key : %s    value is : %s\n", key, entry.getValue());
+               Metadata metadata = entry.getMetadata();
+               if (metadata != null) {
+                  EntryVersion v = metadata.version();
+                  con.printf("        meta : lifespan %d  maxidle %d  version %s\n", metadata.lifespan(), metadata.maxIdle(), (v == null ? "--" : v.toString()));
+               }
+            }
+            if(key != null) {
+               con.printf("The solved value for key=%s is %s", key, solvedEntry.getValue());
+               cache.getAdvancedCache().putAsync(key, solvedEntry.getValue(), solvedEntry.getMetadata());
+            }
+         }
+      });
+      con.printf("    --- done\n");
+   }
+   
    public void stop() {
       cacheManager.stop();
    }
 
    private void inputLoop() {
       while (true) {
-         String action = con.readLine(">");
-         if ("add".equals(action)) {
-            add();
-         } else if ("rm".equals(action)) {
-            remove();
-         } else if ("get".equals(action)) {
-            get();
-         } else if ("list".equals(action)) {
-            list();
-         } else if ("size".equals(action)) {
-            size();
-         } else if ("generate".equals(action)) {
-            generateEntries();
-         } else if ("check".equals(action)) {
-            checkGenerateEntries();
-         } else if ("q".equals(action)) {
-            break;
+         try {
+            String action = con.readLine(">");
+            if ("add".equals(action)) {
+               add();
+            } else if ("rm".equals(action)) {
+               remove();
+            } else if ("get".equals(action)) {
+               get();
+            } else if ("list".equals(action)) {
+               list();
+            } else if ("size".equals(action)) {
+               size();
+            } else if ("generate".equals(action)) {
+               generateEntries();
+            } else if ("check".equals(action)) {
+               checkGenerateEntries();
+            } else if ("solve".equals(action)) {
+               useMergePolicy();
+            } else if ("merge".equals(action)) {
+               resolveConflict();
+            } else if ("q".equals(action)) {
+               break;
+            }
+         } catch (Exception e) {
+            e.printStackTrace();
          }
       }
    }
 
    private void printConsoleHelp() {
-      con.printf("Choose:\n" + "============= \n" + "add  -  add an entry\n" + "rm   -  remove an entry\n" + "get  -  print a value for key\n"
-            + "list -  list all entries which are store local\n"
-            + "size -  local size of cache\n"
-            + "q    -  quit\n");
+      con.printf("Choose:\n" + "============= \n" + "add   -  add an entry\n" + "rm    -  remove an entry\n" + "get   -  print a value for key\n"
+            + "list  -  list all entries which are store local\n"
+            + "size  -  local size of cache\n"
+            + "merge -  invoke conflict manager\n"
+            + "q     -  quit\n");
    }
    
    public static void main(String[] args) {
