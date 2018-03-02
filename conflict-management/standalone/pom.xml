@@ -42,6 +42,7 @@
       <dependency>
          <groupId>org.infinispan</groupId>
          <artifactId>infinispan-embedded</artifactId>
+         <version>${version.org.infinispan}</version>
          <scope>compile</scope>
       </dependency>
 <!--
