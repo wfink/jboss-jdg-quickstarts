@@ -40,6 +40,7 @@
     <modules>
         <module>policy</module>
         <module>standalone</module>
+        <module>client</module>
     </modules>
     <properties>
     <!-- Explicitly declaring the source encoding eliminates the following 
