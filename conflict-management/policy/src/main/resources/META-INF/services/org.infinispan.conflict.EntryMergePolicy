@@ -1,0 +1,2 @@
+# this entry is needed to have the merge policy registered
+org.jboss.as.quickstarts.datagrid.conflict.management.CustomEntryMergePolicy

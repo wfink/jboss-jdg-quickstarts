@@ -38,6 +38,7 @@
         </license>
     </licenses>
     <modules>
+        <module>policy</module>
         <module>standalone</module>
     </modules>
     <properties>
