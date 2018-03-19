@@ -93,7 +93,7 @@
             </executions>
             <configuration>
                <skip>false</skip>
-               <mainClass>org.jboss.as.quickstarts.datagrid.conflict.management.Main</mainClass>
+               <mainClass>org.datagrid.quickstarts.conflict.management.Main</mainClass>
                <systemProperties>
                   <systemProperty>
                      <key>java.net.preferIPv4Stack</key>

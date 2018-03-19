@@ -1,4 +1,4 @@
-package org.jboss.as.quickstarts.datagrid.conflict.management;
+package org.datagrid.quickstarts.conflict.management;
 
 import java.util.Date;
 import java.util.List;

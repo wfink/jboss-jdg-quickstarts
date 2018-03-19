@@ -1,4 +1,4 @@
-package org.jboss.as.quickstarts.datagrid.conflict.management;
+package org.datagrid.quickstarts.conflict.management;
 
 /*
  * JBoss, Home of Professional Open Source
@@ -21,6 +21,7 @@ import java.io.Console;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.datagrid.quickstarts.conflict.management.CustomEntryMergePolicy;
 import org.infinispan.Cache;
 import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.Configuration;
@@ -34,6 +35,7 @@ import org.infinispan.container.entries.NullCacheEntry;
 import org.infinispan.container.versioning.EntryVersion;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.metadata.Metadata;
+import org.infinispan.partitionhandling.PartitionHandling;
 import org.infinispan.remoting.transport.Address;
 import org.infinispan.transaction.lookup.GenericTransactionManagerLookup;
 
@@ -60,7 +62,7 @@ public class Main {
       final Configuration loc = new ConfigurationBuilder().jmxStatistics().enable() // Enable JMX statistics
                .clustering().cacheMode(CacheMode.DIST_SYNC).hash().numOwners(2).stateTransfer().chunkSize(512).fetchInMemoryState(true)
                // NOT WORKING  it is not invoked automatically as expected
-               .partitionHandling().mergePolicy(new CustomEntryMergePolicy())
+               .partitionHandling().whenSplit(PartitionHandling.ALLOW_READ_WRITES).mergePolicy(new CustomEntryMergePolicy())
                .transaction().transactionManagerLookup(new GenericTransactionManagerLookup())
                .build();
       

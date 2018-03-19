@@ -1,4 +1,4 @@
-package org.jboss.as.quickstarts.datagrid.conflict.management.client;
+package org.datagrid.quickstarts.conflict.management.client;
 
 /*
  * JBoss, Home of Professional Open Source
@@ -20,6 +20,7 @@ import java.io.Console;
 
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
+import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 
 /**
  * Simple HotRod client which uses the hotrod-client.properties file to set the remote client configuration.
@@ -35,9 +36,13 @@ public class HotRodMain {
    private RemoteCacheManager remoteCacheManager;
    private RemoteCache<String, String> cache;
 
-   private HotRodMain(Console con) {
+   private HotRodMain(Console con, String host, int port) {
       this.con = con;
-      remoteCacheManager = new RemoteCacheManager(true);
+
+      ConfigurationBuilder builder = new ConfigurationBuilder();
+      builder.addServer().host(host).port(port);
+
+      remoteCacheManager = new RemoteCacheManager(builder.build(),true);
       cache = remoteCacheManager.getCache("PartitionHandlingCache");
    }
 
@@ -120,7 +125,28 @@ public class HotRodMain {
    }
 
    public static void main(String[] args) {
-      HotRodMain client = new HotRodMain(System.console());
+      final Console con = System.console();
+      String host = "127.0.0.1";
+      int port = 11222;
+      
+      int argc = 0;
+      while (argc < args.length) {
+         if (args[argc].equals("-host")) {
+            argc++;
+            host = args[argc];
+            argc++;
+         }else if (args[argc].equals("-port")) {
+               argc++;
+               port = Integer.valueOf(args[argc]);
+               argc++;
+          } else {
+             con.printf("option '%s' unknown\n", args[argc]);
+             System.exit(1);
+          }
+       }
+
+      
+      HotRodMain client = new HotRodMain(con,host,port);
       
       client.printConsoleHelp();
 
