@@ -71,7 +71,7 @@
             </executions>
             <configuration>
                <skip>false</skip>
-               <mainClass>org.jboss.as.quickstarts.datagrid.conflict.management.client.HotRodMain</mainClass>
+               <mainClass>org.datagrid.quickstarts.conflict.management.client.HotRodMain</mainClass>
             </configuration>
          </plugin>
       </plugins>
