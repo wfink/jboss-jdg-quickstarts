@@ -13,12 +13,12 @@ public class CustomEntryMergePolicy implements EntryMergePolicy<String, String> 
 
    @Override
    public CacheEntry<String, String> merge(CacheEntry<String, String> preferredEntry, List<CacheEntry<String, String>> otherEntries) {
-      log.info("merge preferred Entry " + preferredEntry + " number of others is " + otherEntries.size());
+      log.info("merge called with : preferred Entry " + preferredEntry + " number of others is " + otherEntries.size());
       
       CacheEntry<String, String> solved = (preferredEntry instanceof NullCacheEntry) ? null : preferredEntry;
       
       if(solved != null) {
-         log.info("Preferred entry : key="+solved.getKey()+" value="+solved.getValue()+
+         log.info("Preferred entry is : key="+solved.getKey()+" value="+solved.getValue()+
                " created:"+new Date(solved.getCreated())+" ("+solved.getCreated()+")"+
                " lastUsed:"+new Date(solved.getLastUsed())+" ("+solved.getLastUsed()+")");
       }
