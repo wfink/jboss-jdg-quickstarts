@@ -1,0 +1,9 @@
+
+
+package quickstart;
+
+
+message ItemKey {
+  required int64 id = 1;
+  optional string company = 2;
+}

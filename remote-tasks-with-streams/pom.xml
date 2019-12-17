@@ -36,7 +36,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.org.infinispan>9.4.13.Final-redhat-00002</version.org.infinispan>
         <exec.plugin.version>1.2.1</exec.plugin.version>
-        <main.class>org.jboss.as.quickstarts.datagrid.remotetasks.LibraryManager</main.class>
+        <main.classX>org.jboss.as.quickstarts.datagrid.remotetasks.LibraryManager</main.classX>
+        <main.class>org.jboss.as.quickstarts.datagrid.remotetasks.CompanyManager</main.class>
 
         <!-- maven-compiler-plugin -->
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -85,6 +86,15 @@
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-scripting</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.infinispan.protostream</groupId>
+            <artifactId>protostream</artifactId>
+        </dependency>
+       <dependency>
+          <groupId>org.infinispan</groupId>
+          <artifactId>infinispan-remote-query-client</artifactId>
+       </dependency>
+
     </dependencies>
 
     <build>
@@ -125,7 +135,8 @@
                     </excludes>
                     <archive>
                         <manifestEntries>
-                            <Dependencies>org.jboss.as.quickstarts.remote-task-with-streams</Dependencies>
+                            <Dependencies>org.infinispan.protostream</Dependencies>
+                            <!-- Dependencies>org.jboss.as.quickstarts.remote-task-with-streams,org.infinispan.protostream</Dependencies-->
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -141,12 +152,11 @@
                             <finalName>remote-tasks-with-streams</finalName>
                             <excludes>
                                 <exclude>jdg.properties</exclude>
-                                <exclude>module.xml</exclude>
-                                <exclude>books.csv</exclude>
                                 <exclude>META-INF/</exclude>
                                 <exclude>scripts/</exclude>
                                 <exclude>org/jboss/as/quickstarts/datagrid/remotetasks/tasks/</exclude>
                                 <exclude>org/jboss/as/quickstarts/datagrid/remotetasks/LibraryManager.*</exclude>
+                                <exclude>org/jboss/as/quickstarts/datagrid/remotetasks/CompanyManager.*</exclude>
                             </excludes>
                         </configuration>
                     </execution>
